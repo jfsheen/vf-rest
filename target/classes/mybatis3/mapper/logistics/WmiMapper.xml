@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.WmiMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.Wmi" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="co_nam" property="coNam" jdbcType="VARCHAR" />
+    <result column="wmi" property="wmi" jdbcType="CHAR" />
+    <result column="crf_no" property="crfNo" jdbcType="VARCHAR" />
+    <result column="crf_date" property="crfDate" jdbcType="DATE" />
+    <result column="ds" property="ds" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, co_nam, wmi, crf_no, crf_date, ds, ts
+  </sql>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM wmi
+    WHERE ds = 0
+    <if test="wmi != null" >
+      AND wmi = #{wmi,jdbcType=CHAR}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wmi
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wmi
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.Wmi" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into wmi (id,co_nam, wmi, crf_no,
+      crf_date, ds, ts)
+    values (#{id,jdbcType=CHAR}, #{coNam,jdbcType=VARCHAR}, #{wmi,jdbcType=CHAR}, #{crfNo,jdbcType=VARCHAR},
+      #{crfDate,jdbcType=DATE}, #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.Wmi" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into wmi
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="coNam != null" >
+        co_nam,
+      </if>
+      <if test="wmi != null" >
+        wmi,
+      </if>
+      <if test="crfNo != null" >
+        crf_no,
+      </if>
+      <if test="crfDate != null" >
+        crf_date,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=CHAR},
+      <if test="coNam != null" >
+        #{coNam,jdbcType=VARCHAR},
+      </if>
+      <if test="wmi != null" >
+        #{wmi,jdbcType=CHAR},
+      </if>
+      <if test="crfNo != null" >
+        #{crfNo,jdbcType=VARCHAR},
+      </if>
+      <if test="crfDate != null" >
+        #{crfDate,jdbcType=DATE},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.Wmi" >
+    update wmi
+    <set >
+      <if test="coNam != null" >
+        co_nam = #{coNam,jdbcType=VARCHAR},
+      </if>
+      <if test="wmi != null" >
+        wmi = #{wmi,jdbcType=CHAR},
+      </if>
+      <if test="crfNo != null" >
+        crf_no = #{crfNo,jdbcType=VARCHAR},
+      </if>
+      <if test="crfDate != null" >
+        crf_date = #{crfDate,jdbcType=DATE},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.Wmi" >
+    update wmi
+    set co_nam = #{coNam,jdbcType=VARCHAR},
+      wmi = #{wmi,jdbcType=CHAR},
+      crf_no = #{crfNo,jdbcType=VARCHAR},
+      crf_date = #{crfDate,jdbcType=DATE},
+      ds = #{ds,jdbcType=SMALLINT},
+      ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

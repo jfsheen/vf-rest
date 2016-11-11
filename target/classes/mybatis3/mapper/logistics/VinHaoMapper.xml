@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.VinHaoMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.VinHao" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="VINNF" property="vinnf" jdbcType="VARCHAR" />
+    <result column="CJMC" property="cjmc" jdbcType="VARCHAR" />
+    <result column="pp" property="pp" jdbcType="VARCHAR" />
+    <result column="CX" property="cx" jdbcType="VARCHAR" />
+    <result column="PL" property="pl" jdbcType="VARCHAR" />
+    <result column="FDJXH" property="fdjxh" jdbcType="VARCHAR" />
+    <result column="BSQLX" property="bsqlx" jdbcType="VARCHAR" />
+    <result column="DWS" property="dws" jdbcType="VARCHAR" />
+    <result column="PFBZ" property="pfbz" jdbcType="VARCHAR" />
+    <result column="CLDM" property="cldm" jdbcType="VARCHAR" />
+    <result column="SSNF" property="ssnf" jdbcType="VARCHAR" />
+    <result column="TCNF" property="tcnf" jdbcType="VARCHAR" />
+    <result column="ZDJG" property="zdjg" jdbcType="VARCHAR" />
+    <result column="SSYF" property="ssyf" jdbcType="VARCHAR" />
+    <result column="SCNF" property="scnf" jdbcType="VARCHAR" />
+    <result column="NK" property="nk" jdbcType="VARCHAR" />
+    <result column="CXI" property="cxi" jdbcType="VARCHAR" />
+    <result column="XSMC" property="xsmc" jdbcType="VARCHAR" />
+    <result column="CLLX" property="cllx" jdbcType="VARCHAR" />
+    <result column="JB" property="jb" jdbcType="VARCHAR" />
+    <result column="CSXS" property="csxs" jdbcType="VARCHAR" />
+    <result column="CMS" property="cms" jdbcType="VARCHAR" />
+    <result column="ZWS" property="zws" jdbcType="VARCHAR" />
+    <result column="GL" property="gl" jdbcType="VARCHAR" />
+    <result column="RYLX" property="rylx" jdbcType="VARCHAR" />
+    <result column="BSQMS" property="bsqms" jdbcType="VARCHAR" />
+    <result column="RYBH" property="rybh" jdbcType="VARCHAR" />
+    <result column="QDFS" property="qdfs" jdbcType="VARCHAR" />
+    <result column="FDJGS" property="fdjgs" jdbcType="VARCHAR" />
+    <result column="levelId" property="levelid" jdbcType="INTEGER" />
+    <result column="ds" property="ds" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, VINNF, CJMC, pp, CX, PL, FDJXH, BSQLX, DWS, PFBZ, CLDM, SSNF, TCNF, ZDJG, SSYF, 
+    SCNF, NK, CXI, XSMC, CLLX, JB, CSXS, CMS, ZWS, GL, RYLX, BSQMS, RYBH, QDFS, FDJGS, 
+    levelId, ds, ts
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from vin_hao
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from vin_hao
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.VinHao" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into vin_hao (id, VINNF, CJMC, pp,
+      CX, PL, FDJXH, BSQLX, 
+      DWS, PFBZ, CLDM, SSNF, 
+      TCNF, ZDJG, SSYF, SCNF, 
+      NK, CXI, XSMC, CLLX, 
+      JB, CSXS, CMS, ZWS, 
+      GL, RYLX, BSQMS, RYBH, 
+      QDFS, FDJGS, levelId, 
+      ds, ts)
+    values (#{id,jdbcType=CHAR},#{vinnf,jdbcType=VARCHAR}, #{cjmc,jdbcType=VARCHAR}, #{pp,jdbcType=VARCHAR},
+      #{cx,jdbcType=VARCHAR}, #{pl,jdbcType=VARCHAR}, #{fdjxh,jdbcType=VARCHAR}, #{bsqlx,jdbcType=VARCHAR}, 
+      #{dws,jdbcType=VARCHAR}, #{pfbz,jdbcType=VARCHAR}, #{cldm,jdbcType=VARCHAR}, #{ssnf,jdbcType=VARCHAR}, 
+      #{tcnf,jdbcType=VARCHAR}, #{zdjg,jdbcType=VARCHAR}, #{ssyf,jdbcType=VARCHAR}, #{scnf,jdbcType=VARCHAR}, 
+      #{nk,jdbcType=VARCHAR}, #{cxi,jdbcType=VARCHAR}, #{xsmc,jdbcType=VARCHAR}, #{cllx,jdbcType=VARCHAR}, 
+      #{jb,jdbcType=VARCHAR}, #{csxs,jdbcType=VARCHAR}, #{cms,jdbcType=VARCHAR}, #{zws,jdbcType=VARCHAR}, 
+      #{gl,jdbcType=VARCHAR}, #{rylx,jdbcType=VARCHAR}, #{bsqms,jdbcType=VARCHAR}, #{rybh,jdbcType=VARCHAR}, 
+      #{qdfs,jdbcType=VARCHAR}, #{fdjgs,jdbcType=VARCHAR}, #{levelid,jdbcType=INTEGER}, 
+      #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.VinHao" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into vin_hao
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="vinnf != null" >
+        VINNF,
+      </if>
+      <if test="cjmc != null" >
+        CJMC,
+      </if>
+      <if test="pp != null" >
+        pp,
+      </if>
+      <if test="cx != null" >
+        CX,
+      </if>
+      <if test="pl != null" >
+        PL,
+      </if>
+      <if test="fdjxh != null" >
+        FDJXH,
+      </if>
+      <if test="bsqlx != null" >
+        BSQLX,
+      </if>
+      <if test="dws != null" >
+        DWS,
+      </if>
+      <if test="pfbz != null" >
+        PFBZ,
+      </if>
+      <if test="cldm != null" >
+        CLDM,
+      </if>
+      <if test="ssnf != null" >
+        SSNF,
+      </if>
+      <if test="tcnf != null" >
+        TCNF,
+      </if>
+      <if test="zdjg != null" >
+        ZDJG,
+      </if>
+      <if test="ssyf != null" >
+        SSYF,
+      </if>
+      <if test="scnf != null" >
+        SCNF,
+      </if>
+      <if test="nk != null" >
+        NK,
+      </if>
+      <if test="cxi != null" >
+        CXI,
+      </if>
+      <if test="xsmc != null" >
+        XSMC,
+      </if>
+      <if test="cllx != null" >
+        CLLX,
+      </if>
+      <if test="jb != null" >
+        JB,
+      </if>
+      <if test="csxs != null" >
+        CSXS,
+      </if>
+      <if test="cms != null" >
+        CMS,
+      </if>
+      <if test="zws != null" >
+        ZWS,
+      </if>
+      <if test="gl != null" >
+        GL,
+      </if>
+      <if test="rylx != null" >
+        RYLX,
+      </if>
+      <if test="bsqms != null" >
+        BSQMS,
+      </if>
+      <if test="rybh != null" >
+        RYBH,
+      </if>
+      <if test="qdfs != null" >
+        QDFS,
+      </if>
+      <if test="fdjgs != null" >
+        FDJGS,
+      </if>
+      <if test="levelid != null" >
+        levelId,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=CHAR},
+      <if test="vinnf != null" >
+        #{vinnf,jdbcType=VARCHAR},
+      </if>
+      <if test="cjmc != null" >
+        #{cjmc,jdbcType=VARCHAR},
+      </if>
+      <if test="pp != null" >
+        #{pp,jdbcType=VARCHAR},
+      </if>
+      <if test="cx != null" >
+        #{cx,jdbcType=VARCHAR},
+      </if>
+      <if test="pl != null" >
+        #{pl,jdbcType=VARCHAR},
+      </if>
+      <if test="fdjxh != null" >
+        #{fdjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="bsqlx != null" >
+        #{bsqlx,jdbcType=VARCHAR},
+      </if>
+      <if test="dws != null" >
+        #{dws,jdbcType=VARCHAR},
+      </if>
+      <if test="pfbz != null" >
+        #{pfbz,jdbcType=VARCHAR},
+      </if>
+      <if test="cldm != null" >
+        #{cldm,jdbcType=VARCHAR},
+      </if>
+      <if test="ssnf != null" >
+        #{ssnf,jdbcType=VARCHAR},
+      </if>
+      <if test="tcnf != null" >
+        #{tcnf,jdbcType=VARCHAR},
+      </if>
+      <if test="zdjg != null" >
+        #{zdjg,jdbcType=VARCHAR},
+      </if>
+      <if test="ssyf != null" >
+        #{ssyf,jdbcType=VARCHAR},
+      </if>
+      <if test="scnf != null" >
+        #{scnf,jdbcType=VARCHAR},
+      </if>
+      <if test="nk != null" >
+        #{nk,jdbcType=VARCHAR},
+      </if>
+      <if test="cxi != null" >
+        #{cxi,jdbcType=VARCHAR},
+      </if>
+      <if test="xsmc != null" >
+        #{xsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null" >
+        #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="jb != null" >
+        #{jb,jdbcType=VARCHAR},
+      </if>
+      <if test="csxs != null" >
+        #{csxs,jdbcType=VARCHAR},
+      </if>
+      <if test="cms != null" >
+        #{cms,jdbcType=VARCHAR},
+      </if>
+      <if test="zws != null" >
+        #{zws,jdbcType=VARCHAR},
+      </if>
+      <if test="gl != null" >
+        #{gl,jdbcType=VARCHAR},
+      </if>
+      <if test="rylx != null" >
+        #{rylx,jdbcType=VARCHAR},
+      </if>
+      <if test="bsqms != null" >
+        #{bsqms,jdbcType=VARCHAR},
+      </if>
+      <if test="rybh != null" >
+        #{rybh,jdbcType=VARCHAR},
+      </if>
+      <if test="qdfs != null" >
+        #{qdfs,jdbcType=VARCHAR},
+      </if>
+      <if test="fdjgs != null" >
+        #{fdjgs,jdbcType=VARCHAR},
+      </if>
+      <if test="levelid != null" >
+        #{levelid,jdbcType=INTEGER},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.VinHao" >
+    update vin_hao
+    <set >
+      <if test="vinnf != null" >
+        VINNF = #{vinnf,jdbcType=VARCHAR},
+      </if>
+      <if test="cjmc != null" >
+        CJMC = #{cjmc,jdbcType=VARCHAR},
+      </if>
+      <if test="pp != null" >
+        pp = #{pp,jdbcType=VARCHAR},
+      </if>
+      <if test="cx != null" >
+        CX = #{cx,jdbcType=VARCHAR},
+      </if>
+      <if test="pl != null" >
+        PL = #{pl,jdbcType=VARCHAR},
+      </if>
+      <if test="fdjxh != null" >
+        FDJXH = #{fdjxh,jdbcType=VARCHAR},
+      </if>
+      <if test="bsqlx != null" >
+        BSQLX = #{bsqlx,jdbcType=VARCHAR},
+      </if>
+      <if test="dws != null" >
+        DWS = #{dws,jdbcType=VARCHAR},
+      </if>
+      <if test="pfbz != null" >
+        PFBZ = #{pfbz,jdbcType=VARCHAR},
+      </if>
+      <if test="cldm != null" >
+        CLDM = #{cldm,jdbcType=VARCHAR},
+      </if>
+      <if test="ssnf != null" >
+        SSNF = #{ssnf,jdbcType=VARCHAR},
+      </if>
+      <if test="tcnf != null" >
+        TCNF = #{tcnf,jdbcType=VARCHAR},
+      </if>
+      <if test="zdjg != null" >
+        ZDJG = #{zdjg,jdbcType=VARCHAR},
+      </if>
+      <if test="ssyf != null" >
+        SSYF = #{ssyf,jdbcType=VARCHAR},
+      </if>
+      <if test="scnf != null" >
+        SCNF = #{scnf,jdbcType=VARCHAR},
+      </if>
+      <if test="nk != null" >
+        NK = #{nk,jdbcType=VARCHAR},
+      </if>
+      <if test="cxi != null" >
+        CXI = #{cxi,jdbcType=VARCHAR},
+      </if>
+      <if test="xsmc != null" >
+        XSMC = #{xsmc,jdbcType=VARCHAR},
+      </if>
+      <if test="cllx != null" >
+        CLLX = #{cllx,jdbcType=VARCHAR},
+      </if>
+      <if test="jb != null" >
+        JB = #{jb,jdbcType=VARCHAR},
+      </if>
+      <if test="csxs != null" >
+        CSXS = #{csxs,jdbcType=VARCHAR},
+      </if>
+      <if test="cms != null" >
+        CMS = #{cms,jdbcType=VARCHAR},
+      </if>
+      <if test="zws != null" >
+        ZWS = #{zws,jdbcType=VARCHAR},
+      </if>
+      <if test="gl != null" >
+        GL = #{gl,jdbcType=VARCHAR},
+      </if>
+      <if test="rylx != null" >
+        RYLX = #{rylx,jdbcType=VARCHAR},
+      </if>
+      <if test="bsqms != null" >
+        BSQMS = #{bsqms,jdbcType=VARCHAR},
+      </if>
+      <if test="rybh != null" >
+        RYBH = #{rybh,jdbcType=VARCHAR},
+      </if>
+      <if test="qdfs != null" >
+        QDFS = #{qdfs,jdbcType=VARCHAR},
+      </if>
+      <if test="fdjgs != null" >
+        FDJGS = #{fdjgs,jdbcType=VARCHAR},
+      </if>
+      <if test="levelid != null" >
+        levelId = #{levelid,jdbcType=INTEGER},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.VinHao" >
+    update vin_hao
+    set VINNF = #{vinnf,jdbcType=VARCHAR},
+      CJMC = #{cjmc,jdbcType=VARCHAR},
+      pp = #{pp,jdbcType=VARCHAR},
+      CX = #{cx,jdbcType=VARCHAR},
+      PL = #{pl,jdbcType=VARCHAR},
+      FDJXH = #{fdjxh,jdbcType=VARCHAR},
+      BSQLX = #{bsqlx,jdbcType=VARCHAR},
+      DWS = #{dws,jdbcType=VARCHAR},
+      PFBZ = #{pfbz,jdbcType=VARCHAR},
+      CLDM = #{cldm,jdbcType=VARCHAR},
+      SSNF = #{ssnf,jdbcType=VARCHAR},
+      TCNF = #{tcnf,jdbcType=VARCHAR},
+      ZDJG = #{zdjg,jdbcType=VARCHAR},
+      SSYF = #{ssyf,jdbcType=VARCHAR},
+      SCNF = #{scnf,jdbcType=VARCHAR},
+      NK = #{nk,jdbcType=VARCHAR},
+      CXI = #{cxi,jdbcType=VARCHAR},
+      XSMC = #{xsmc,jdbcType=VARCHAR},
+      CLLX = #{cllx,jdbcType=VARCHAR},
+      JB = #{jb,jdbcType=VARCHAR},
+      CSXS = #{csxs,jdbcType=VARCHAR},
+      CMS = #{cms,jdbcType=VARCHAR},
+      ZWS = #{zws,jdbcType=VARCHAR},
+      GL = #{gl,jdbcType=VARCHAR},
+      RYLX = #{rylx,jdbcType=VARCHAR},
+      BSQMS = #{bsqms,jdbcType=VARCHAR},
+      RYBH = #{rybh,jdbcType=VARCHAR},
+      QDFS = #{qdfs,jdbcType=VARCHAR},
+      FDJGS = #{fdjgs,jdbcType=VARCHAR},
+      levelId = #{levelid,jdbcType=INTEGER},
+      ds = #{ds,jdbcType=SMALLINT},
+      ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

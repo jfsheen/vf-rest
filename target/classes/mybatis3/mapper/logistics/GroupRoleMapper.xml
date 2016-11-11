@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.auth.GroupRoleMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.auth.GroupRole" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="ds" property="ds" jdbcType="SMALLINT"/>
+    <result column="ts" property="ts" jdbcType="BIGINT"/>
+    <association column="group_id" property="group" jdbcType="CHAR" select="selectAssocGroup"/>
+    <association column="role_id" property="role" jdbcType="CHAR" select="selectAssocRole"/>
+  </resultMap>
+  <resultMap id="AssocGroupResultMap" type="cc.aisc.business.model.auth.Group">
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+  </resultMap>
+  <resultMap id="AssocRoleResultMap" type="cc.aisc.business.model.auth.Role">
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, group_id, role_id, ds, ts
+  </sql>
+  <select id="selectAssocGroup" parameterType="java.lang.String" resultMap="AssocGroupResultMap">
+    SELECT id, `name` from auth_group WHERE id = #{id,jdbcType=CHAR}
+  </select>
+  <select id="selectAssocRole" parameterType="java.lang.String" resultMap="AssocRoleResultMap">
+    SELECT id, `name` from auth_role WHERE id = #{id,jdbcType=CHAR}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from auth_group_role
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from auth_group_role
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.auth.GroupRole" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into auth_group_role (id, group_id, role_id, ds, ts)
+    values (#{group.id,jdbcType=CHAR}, #{role.id,jdbcType=CHAR},
+    #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT}))
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.auth.GroupRole" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into auth_group_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
+      <if test="group != null" >
+        group_id,
+      </if>
+      <if test="role != null" >
+        role_id,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id!=null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="group != null" >
+        #{group.id,jdbcType=CHAR},
+      </if>
+      <if test="role != null" >
+        #{role.id,jdbcType=CHAR},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.auth.GroupRole" >
+    update auth_group_role
+    <set >
+      <if test="group != null" >
+        group_id = #{group.id,jdbcType=CHAR},
+      </if>
+      <if test="role != null" >
+        role_id = #{role.id,jdbcType=CHAR},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.auth.GroupRole" >
+    update auth_group_role
+    set group_id = #{group.id,jdbcType=CHAR},
+    role_id = #{role.id,jdbcType=CHAR},
+    ds = #{ds,jdbcType=SMALLINT},
+    ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

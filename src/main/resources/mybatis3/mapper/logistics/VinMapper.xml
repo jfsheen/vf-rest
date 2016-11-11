@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.VinMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.Vin" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="vin" property="vin" jdbcType="CHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="CHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="ds" property="ds" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, vin, description, pid, `level`, sort, ds, ts
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM vin
+  </select>
+  <select id="selectValid" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM vin
+    WHERE ds = #{ds,jdbcType=SMALLINT}
+  </select>
+  <select id="selectFuzzyByQt" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM vin
+    WHERE ds = 0
+    AND `level` = 1
+    <if test="qt!=null and qt!=''">
+      AND (vin LIKE CONCAT(CONCAT(#{qt,jdbcType=VARCHAR},'%'))
+      OR description LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%')))
+    </if>
+  </select>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM vin
+    WHERE ds = 0
+    <if test="vin!=null">
+      AND vin = #{vin,jdbcType=VARCHAR}
+    </if>
+    <if test="description!=null">
+      AND description LIKE CONCAT(CONCAT('%',#{description,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="pid!=null">
+      AND pid = #{pid,jdbcType=VARCHAR}
+    </if>
+    <if test="level != null" >
+      AND `level` = #{level,jdbcType=INTEGER}
+    </if>
+    <if test="sort != null" >
+      AND sort = #{sort,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM vin
+    WHERE ds = 0
+    <if test="vin!=null">
+      AND vin = #{vin,jdbcType=VARCHAR}
+    </if>
+    <if test="description!=null">
+      AND description LIKE CONCAT(CONCAT('%',#{description,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="pid!=null">
+      AND pid = #{pid,jdbcType=VARCHAR}
+    </if>
+    <if test="level != null" >
+      AND `level` = #{level,jdbcType=INTEGER}
+    </if>
+    <if test="sort != null" >
+      AND sort = #{sort,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByMultiConditioned" parameterType="cc.aisc.business.model.sys.Vin" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM vin
+    WHERE 1 = 1
+    <if test="ds!=null">
+      AND ds = #{ds,jdbcType=SMALLINT}
+    </if>
+    <if test="vin!=null">
+      AND vin = #{vin,jdbcType=CHAR}
+    </if>
+    <if test="description!=null">
+      AND description LIKE CONCAT(CONCAT('%',#{description,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="pid!=null">
+      AND pid = #{pid,jdbcType=CHAR}
+    </if>
+    <if test="level != null" >
+      AND `level` = #{level,jdbcType=INTEGER}
+    </if>
+    <if test="sort != null" >
+      AND sort = #{sort,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from vin
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from vin
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.Vin" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into vin (id, vin, description, pid, `level`, sort, ds, ts)
+    values (#{id,jdbcType=CHAR}, #{vin,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}, #{pid,jdbcType=CHAR},
+    #{level,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.Vin" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into vin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="vin != null" >
+        vin,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="level != null" >
+        `level`,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="vin != null" >
+        #{vin,jdbcType=CHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=CHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.Vin" >
+    update vin
+    <set >
+      <if test="vin != null" >
+        vin = #{vin,jdbcType=CHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="level != null" >
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.Vin" >
+    update vin
+    set vin = #{vin,jdbcType=CHAR},
+    description = #{description,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=CHAR},
+      `level` = #{level,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      ds = #{ds,jdbcType=SMALLINT},
+      ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

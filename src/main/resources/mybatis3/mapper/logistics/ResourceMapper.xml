@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.ResourceMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.Resource" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="func_path" property="funcPath" jdbcType="VARCHAR" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="CHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="ds" property="ds" jdbcType="SMALLINT"/>
+    <result column="ts" property="ts" jdbcType="BIGINT"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, `name`, func_path, image, `status`, `level`, sort, pid, description, enabled, ds, ts
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_resource
+  </select>
+  <select id="selectValid" resultMap="BaseResultMap"  parameterType="java.lang.Short">
+    select
+    <include refid="Base_Column_List" />
+    from sys_resource
+    WHERE ds = #{ds,jdbcType=SMALLINT}
+  </select>
+  <select id="selectFuzzyByQt" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT
+    <include refid="Base_Column_List" />
+    from sys_resource
+    where ds = 0
+    <if test="qt!=null and qt!=''">
+      AND `name` LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
+  <select id="selectValuedBySelective" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    SELECT
+    <include refid="Base_Column_List" />
+    from sys_resource
+    where ds = 0
+    <if test="name!=null and name!=''">
+      AND `name` LIKE CONCAT(CONCAT('%',#{name,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+    SELECT
+    <include refid="Base_Column_List" />
+    from sys_resource
+    where ds = 0
+    <if test="name!=null and name!=''">
+      AND `name` LIKE CONCAT(CONCAT('%',#{name,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_resource
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_resource
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.Resource" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into sys_resource (id, `name`, func_path, image,
+    `status`, `level`, sort,
+    pid, description, enabled,ds,ts
+    )
+    values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{funcPath,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+    #{status,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER},
+    #{pid,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}, #{enabled,jdbcType=BIT},
+    #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.Resource" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into sys_resource
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="funcPath != null" >
+        func_path,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="level != null" >
+        `level`,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id!=null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="funcPath != null" >
+        #{funcPath,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=CHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.Resource" >
+    update sys_resource
+    <set >
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="funcPath != null" >
+        func_path = #{funcPath,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.Resource" >
+    update sys_resource
+    set `name` = #{name,jdbcType=VARCHAR},
+    func_path = #{funcPath,jdbcType=VARCHAR},
+    image = #{image,jdbcType=VARCHAR},
+    `status` = #{status,jdbcType=INTEGER},
+    `level` = #{level,jdbcType=INTEGER},
+    sort = #{sort,jdbcType=INTEGER},
+    pid = #{pid,jdbcType=CHAR},
+    description = #{description,jdbcType=VARCHAR},
+    enabled = #{enabled,jdbcType=BIT},
+    ds = #{ds,jdbcType=SMALLINT},
+    ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

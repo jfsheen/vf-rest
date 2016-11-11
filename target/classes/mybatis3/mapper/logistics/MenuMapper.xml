@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.MenuMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.Menu" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="sref" property="sref" jdbcType="VARCHAR" />
+    <result column="text" property="text" jdbcType="VARCHAR" />
+    <result column="tooltip" property="tooltip" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="CHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+    <result column="modify_at" property="modifyAt" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="CHAR" />
+    <result column="modify_by" property="modifyBy" jdbcType="CHAR" />
+    <result column="translate" property="translate" jdbcType="VARCHAR" />
+    <result column="ds" property="ds" jdbcType="SMALLINT"/>
+    <result column="ts" property="ts" jdbcType="BIGINT"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, `level`, sort, `status`, sref, `text`, tooltip, pid, icon, create_at, modify_at,
+    create_by, modify_by, `translate`, ds, ts
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu
+  </select>
+  <select id="selectValid" resultMap="BaseResultMap" parameterType="java.lang.Short">
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu
+    WHERE ds = #{ds,jdbcType=SMALLINT}
+  </select>
+  <select id="selectAllByLevelLe" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu
+    <if test="_parameter != null and _parameter &gt; 0">
+      WHERE `level` &lt;= #{_parameter,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_menu
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.Menu" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into sys_menu (id, `level`, sort, `status`,
+    sref, `text`, tooltip,
+    pid, icon, create_at,
+    modify_at, create_by, modify_by,
+    `translate`,ds,ts)
+    values (#{id,jdbcType=CHAR}, #{level,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
+    #{sref,jdbcType=VARCHAR}, #{text,jdbcType=VARCHAR}, #{tooltip,jdbcType=VARCHAR},
+    #{pid,jdbcType=CHAR}, #{icon,jdbcType=VARCHAR}, #{createAt,jdbcType=TIMESTAMP},
+    #{modifyAt,jdbcType=TIMESTAMP}, #{createBy,jdbcType=CHAR}, #{modifyBy,jdbcType=CHAR},
+    #{translate,jdbcType=VARCHAR},
+    #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT}))
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.Menu" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into sys_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
+      <if test="level != null" >
+        `level`,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="sref != null" >
+        sref,
+      </if>
+      <if test="text != null" >
+        `text`,
+      </if>
+      <if test="tooltip != null" >
+        tooltip,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="createAt != null" >
+        create_at,
+      </if>
+      <if test="modifyAt != null" >
+        modify_at,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="modifyBy != null" >
+        modify_by,
+      </if>
+      <if test="translate != null" >
+        `translate`,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id!=null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="sref != null" >
+        #{sref,jdbcType=VARCHAR},
+      </if>
+      <if test="text != null" >
+        #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="tooltip != null" >
+        #{tooltip,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=CHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="createAt != null" >
+        #{createAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyAt != null" >
+        #{modifyAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=CHAR},
+      </if>
+      <if test="modifyBy != null" >
+        #{modifyBy,jdbcType=CHAR},
+      </if>
+      <if test="translate != null" >
+        #{translate,jdbcType=VARCHAR},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.Menu" >
+    update sys_menu
+    <set >
+      <if test="level != null" >
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="sref != null" >
+        sref = #{sref,jdbcType=VARCHAR},
+      </if>
+      <if test="text != null" >
+        `text` = #{text,jdbcType=VARCHAR},
+      </if>
+      <if test="tooltip != null" >
+        tooltip = #{tooltip,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="createAt != null" >
+        create_at = #{createAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyAt != null" >
+        modify_at = #{modifyAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=CHAR},
+      </if>
+      <if test="modifyBy != null" >
+        modify_by = #{modifyBy,jdbcType=CHAR},
+      </if>
+      <if test="translate != null" >
+        `translate` = #{translate,jdbcType=VARCHAR},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.Menu" >
+    update sys_menu
+    set `level` = #{level,jdbcType=INTEGER},
+    sort = #{sort,jdbcType=INTEGER},
+    `status` = #{status,jdbcType=INTEGER},
+    sref = #{sref,jdbcType=VARCHAR},
+    `text` = #{text,jdbcType=VARCHAR},
+    tooltip = #{tooltip,jdbcType=VARCHAR},
+    pid = #{pid,jdbcType=CHAR},
+    icon = #{icon,jdbcType=VARCHAR},
+    create_at = #{createAt,jdbcType=TIMESTAMP},
+    modify_at = #{modifyAt,jdbcType=TIMESTAMP},
+    create_by = #{createBy,jdbcType=CHAR},
+    modify_by = #{modifyBy,jdbcType=CHAR},
+    `translate` = #{translate,jdbcType=VARCHAR},
+    ds = #{ds,jdbcType=SMALLINT},
+    ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.log.StatusLogMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.log.StatusLog" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="obj_id" property="objId" jdbcType="CHAR" />
+    <result column="sts_code" property="stsCode" jdbcType="INTEGER" />
+    <result column="sts_ts" property="stsTs" jdbcType="BIGINT" />
+    <result column="ds" property="ds" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="BIGINT" />
+  </resultMap>
+  <resultMap id="ValuedResultMap" type="cc.aisc.business.model.sys.log.StatusLog" extends="BaseResultMap">
+  </resultMap>
+  <resultMap id="DetailedResultMap" type="cc.aisc.business.model.sys.log.StatusLog" extends="ValuedResultMap">
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, obj_id, sts_code, sts_ts, ds, ts
+  </sql>
+  <select id="selectLastStsCodeByObjId" resultType="java.lang.Integer">
+    SELECT sts_code from status_log WHERE sts_ts in (SELECT MAX(sts_ts) FROM status_log WHERE obj_id = #{objId,jdbcType=CHAR})
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+  </select>
+  <select id="selectValid" resultMap="BaseResultMap" parameterType="java.lang.Short">
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+    WHERE ds = #{ds,jdbcType=SMALLINT}
+  </select>
+  <select id="selectFuzzyByQt" parameterType="java.lang.String" resultMap="ValuedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+    where ds = 0
+    <if test="qt!=null and qt!=''">
+      AND  (obj_id = #{qt,jdbcType=VARCHAR}
+      OR sts_ts = #{qt,jdbcType=VARCHAR} + 0)
+    </if>
+  </select>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="ValuedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+    where ds = 0
+    <if test="objId!=null and objId!=''">
+      AND  obj_id = #{qt,jdbcType=VARCHAR}
+    </if>
+    <if test="stsTs!=null">
+      AND  sts_ts = #{qt,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" parameterType="java.util.HashMap" resultMap="DetailedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+    where ds = 0
+    <if test="objId!=null and objId!=''">
+      AND  obj_id = #{qt,jdbcType=VARCHAR}
+    </if>
+    <if test="stsTs!=null">
+      AND  sts_ts = #{qt,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectByMultiConditioned" parameterType="cc.aisc.business.model.sys.log.StatusLog" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+    where ds = 0
+    <if test="objId!=null and objId!=''">
+      AND  obj_id = #{qt,jdbcType=VARCHAR}
+    </if>
+    <if test="stsTs!=null">
+      AND  sts_ts = #{qt,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from status_log
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from status_log
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.log.StatusLog" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into status_log (id, obj_id, sts_code, sts_ts, ds, ts)
+    values (#{id, jdbcType=CHAR}, #{objId,jdbcType=CHAR}, #{stsCode,jdbcType=INTEGER}, #{stsTs,jdbcType=BIGINT},
+    #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertBatch" parameterType="java.util.List" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into status_log (id, obj_id, sts_code, sts_ts, ds, ts)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id, jdbcType=CHAR}, #{item.objId,jdbcType=CHAR}, #{item.stsCode,jdbcType=INTEGER}, #{item.stsTs,jdbcType=BIGINT},
+      #{item.ds,jdbcType=SMALLINT}, #{item.ts,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.log.StatusLog" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into status_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
+      <if test="objId != null" >
+        obj_id,
+      </if>
+      <if test="stsCode != null" >
+        sts_code,
+      </if>
+      <if test="stsTs != null" >
+        sts_ts,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        #{id, jdbcType=CHAR},
+      </if>
+      <if test="objId != null" >
+        #{objId,jdbcType=CHAR},
+      </if>
+      <if test="stsCode != null" >
+        #{stsCode,jdbcType=INTEGER},
+      </if>
+      <if test="stsTs != null" >
+        #{stsTs,jdbcType=BIGINT},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.log.StatusLog" >
+    update status_log
+    <set >
+      <if test="objId != null" >
+        obj_id = #{objId,jdbcType=CHAR},
+      </if>
+      <if test="stsCode != null" >
+        sts_code = #{stsCode,jdbcType=INTEGER},
+      </if>
+      <if test="stsTs != null" >
+        sts_ts = #{stsTs,jdbcType=BIGINT},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.log.StatusLog" >
+    update status_log
+    set obj_id = #{objId,jdbcType=CHAR},
+    sts_code = #{stsCode,jdbcType=INTEGER},
+    sts_ts = #{stsTs,jdbcType=BIGINT},
+    ds = #{ds,jdbcType=SMALLINT},
+    ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

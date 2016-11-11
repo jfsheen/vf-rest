@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.auth.UserMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.auth.User" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="nicename" property="nicename" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" typeHandler="cc.aisc.commons.type.ValuedEnumTypeHandler"/>
+    <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+    <result column="last_login" property="lastLogin" jdbcType="TIMESTAMP" />
+    <result column="expiry_at" property="expiryAt" jdbcType="TIMESTAMP" />
+    <result column="rest_psw_at" property="restPswAt" jdbcType="TIMESTAMP" />
+    <result column="ds" property="ds" jdbcType="SMALLINT"/>
+    <result column="ts" property="ts" jdbcType="BIGINT"/>
+  </resultMap>
+  <resultMap id="ValuedResultMap" type="cc.aisc.business.model.auth.User" extends="BaseResultMap">
+  </resultMap>
+  <resultMap id="DetailedResultMap"  extends="ValuedResultMap" type="cc.aisc.business.model.auth.User" >
+    <collection property="roles" column="id" javaType="ArrayList" select="selectRolesList"/>
+  </resultMap>
+  <resultMap id="RolesResultMap" type="cc.aisc.business.model.auth.Role">
+    <id property="id" column="id" jdbcType="CHAR"/>
+    <result property="name" column="name" jdbcType="VARCHAR"/>
+    <collection property="permissions" column="id" javaType="ArrayList" select="selectPermsList"/>
+  </resultMap>
+  <resultMap id="PermsResultMap" type="cc.aisc.business.model.auth.Permission">
+    <result property="permType" column="perm_type" typeHandler="cc.aisc.commons.type.ValuedEnumTypeHandler" />
+    <association property="resource" column="resource_id" select="selectAssocRes" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, username, `password`, nicename, mobile, `status`, create_at, last_login, expiry_at, 
+    rest_psw_at, ds, ts
+  </sql>
+  <select id="selectDetailedByUsername" resultMap="DetailedResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from auth_user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
+  <select id="selectRolesList" parameterType="java.lang.String" resultMap="RolesResultMap">
+    SELECT id, `name`
+    FROM auth_role
+    WHERE id IN
+    (SELECT role_id
+    FROM auth_user_role
+    WHERE user_id=#{id,jdbcType=CHAR})
+  </select>
+  <select id="selectPermsList" parameterType="java.lang.String" resultMap="PermsResultMap">
+    select perm_type, resource_id
+    from auth_permission
+    WHERE role_id=#{id,jdbcType=CHAR}
+  </select>
+  <select id="selectAssocRes" parameterType="java.lang.String" resultType="cc.aisc.business.model.sys.Resource">
+    SELECT id, `name`, func_path
+    FROM sys_resource
+    WHERE enabled = 1
+    and id=#{resource_id,jdbcType=CHAR}
+  </select>
+  <select id="selectGroupsList" resultType="java.lang.String" parameterType="java.lang.Long">
+    SELECT group_id
+    FROM auth_user_group
+    where user_id = #{id, jdbcType=CHAR}
+  </select>
+  <select id="selectAll" resultMap="ValuedResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from auth_user
+  </select>
+  <select id="selectValid" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from auth_user
+    where ds = #{ds,jdbcType=SMALLINT}
+  </select>
+  <select id="selectFuzzyByQt" parameterType="java.lang.String" resultMap="ValuedResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from auth_user
+    where ds = 0
+    <if test="qt!=null and qt!=''">
+      AND  (username LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+      OR nickname LIKE CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%')))
+    </if>
+  </select>
+  <select id="selectValuedBySelective" resultMap="ValuedResultMap" parameterType="java.util.HashMap" >
+    select
+    <include refid="Base_Column_List" />
+    from auth_user
+    where ds = 0
+    <if test="nicename!=null and nicename!=''">
+      and  username LIKE CONCAT(CONCAT('%',#{nicename,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="username!=null and username!=''">
+      and  username = #{username,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" resultMap="DetailedResultMap" parameterType="java.util.HashMap" >
+    select
+    <include refid="Base_Column_List" />
+    from auth_user
+    where ds = 0
+    <if test="nicename!=null and nicename!=''">
+      and  username LIKE CONCAT(CONCAT('%',#{nicename,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="username!=null and username!=''">
+      and  username = #{username,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="DetailedResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from auth_user
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from auth_user
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.auth.User" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into auth_user (id, username, `password`, nicename,
+      mobile, `status`, create_at, 
+      last_login, expiry_at, rest_psw_at,ds,ts
+      )
+    values (#{id,jdbcType=CHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{nicename,jdbcType=VARCHAR},
+      #{mobile,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+    #{createAt,jdbcType=TIMESTAMP},
+      #{lastLogin,jdbcType=TIMESTAMP}, #{expiryAt,jdbcType=TIMESTAMP}, #{restPswAt,jdbcType=TIMESTAMP},
+    #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.auth.User" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into auth_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+      id,
+      </if>
+        <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        `password`,
+      </if>
+      <if test="nicename != null" >
+        nicename,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="createAt != null" >
+        create_at,
+      </if>
+      <if test="lastLogin != null" >
+        last_login,
+      </if>
+      <if test="expiryAt != null" >
+        expiry_at,
+      </if>
+      <if test="restPswAt != null" >
+        rest_psw_at,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id!=null">
+#{id,jdbcType=CHAR},
+      </if>
+        <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nicename != null" >
+        #{nicename,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+      </if>
+      <if test="createAt != null" >
+        #{createAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLogin != null" >
+        #{lastLogin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expiryAt != null" >
+        #{expiryAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="restPswAt != null" >
+        #{restPswAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.auth.User" >
+    update auth_user
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        `password` = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nicename != null" >
+        nicename = #{nicename,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+      </if>
+      <if test="createAt != null" >
+        create_at = #{createAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLogin != null" >
+        last_login = #{lastLogin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expiryAt != null" >
+        expiry_at = #{expiryAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="restPswAt != null" >
+        rest_psw_at = #{restPswAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.auth.User" >
+    update auth_user
+    set username = #{username,jdbcType=VARCHAR},
+      `password` = #{password,jdbcType=VARCHAR},
+      nicename = #{nicename,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+      create_at = #{createAt,jdbcType=TIMESTAMP},
+      last_login = #{lastLogin,jdbcType=TIMESTAMP},
+      expiry_at = #{expiryAt,jdbcType=TIMESTAMP},
+      rest_psw_at = #{restPswAt,jdbcType=TIMESTAMP},
+      ds = #{ds,jdbcType=SMALLINT},
+      ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

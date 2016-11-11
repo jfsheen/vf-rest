@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.auth.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.auth.Permission" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="perm_type" property="permType" jdbcType="INTEGER" typeHandler="cc.aisc.commons.type.ValuedEnumTypeHandler" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="ds" property="ds" jdbcType="SMALLINT"/>
+    <result column="ts" property="ts" jdbcType="BIGINT"/>
+    <association column="role_id" property="role" jdbcType="CHAR" select="selectAssocRole"/>
+    <association column="resource_id" property="resource" jdbcType="CHAR" select="selectAssocResource"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, role_id, resource_id, perm_type, description, ds, ts
+  </sql>
+  <select id="selectAssocRole" parameterType="java.lang.String" resultType="cc.aisc.business.model.auth.Role">
+    SELECT
+    id, `name`, status
+    FROM auth_role
+    WHERE id=#{id,jdbcType=CHAR}
+  </select>
+  <select id="selectAssocResource" parameterType="java.lang.String" resultType="cc.aisc.business.model.sys.Resource">
+    SELECT
+    id, `name`, status,enabled,func_path
+    FROM sys_resource
+    WHERE id=#{id,jdbcType=CHAR}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from auth_permission
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from auth_permission
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.auth.Permission" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into auth_permission (id, role_id, resource_id, perm_type,
+    description,ds, ts)
+    values (#{id,jdbcType=CHAR}, #{role.id,jdbcType=CHAR}, #{resource.id,jdbcType=CHAR},
+    #{permType,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+    #{description,jdbcType=VARCHAR},
+    #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT}))
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.auth.Permission" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into auth_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">
+        id,
+      </if>
+      <if test="role != null" >
+        role_id,
+      </if>
+      <if test="resource != null" >
+        resource_id,
+      </if>
+      <if test="permType != null" >
+        perm_type,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id!=null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="role != null" >
+        #{role.id,jdbcType=CHAR},
+      </if>
+      <if test="resource != null" >
+        #{resource.id,jdbcType=CHAR},
+      </if>
+      <if test="permType != null" >
+        #{permType,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.auth.Permission" >
+    update auth_permission
+    <set >
+      <if test="role != null" >
+        role_id = #{role.id,jdbcType=CHAR},
+      </if>
+      <if test="resource != null" >
+        resource_id = #{resource.id,jdbcType=CHAR},
+      </if>
+      <if test="permType != null" >
+        perm_type = #{permType,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.auth.Permission" >
+    update auth_permission
+    set role_id = #{role.id,jdbcType=CHAR},
+    resource_id = #{resource.id,jdbcType=CHAR},
+    perm_type = #{permType,jdbcType=INTEGER,typeHandler=cc.aisc.commons.type.ValuedEnumTypeHandler},
+    description = #{description,jdbcType=VARCHAR},
+    ds = #{ds,jdbcType=SMALLINT},
+    ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

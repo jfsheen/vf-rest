@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.CarModelMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.CarModel" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="eval_prc" property="evalPrc" jdbcType="DECIMAL" />
+    <result column="is_imptd" property="isImptd" jdbcType="BIT" />
+    <result column="car_info" property="carInfo" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="lbl_nam" property="lblName" jdbcType="VARCHAR" />
+    <result column="colors" property="colors" jdbcType="VARCHAR" />
+    <result column="ts" property="ts" jdbcType="BIGINT" />
+    <result column="ds" property="ds" jdbcType="SMALLINT" />
+  </resultMap>
+  <resultMap id="ValuedResultMap" type="cc.aisc.business.model.sys.CarModel" extends="BaseResultMap">
+  </resultMap>
+  <resultMap id="DetailedResultMap" type="cc.aisc.business.model.sys.CarModel" extends="ValuedResultMap">
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, `level`, sort, pid, `name`, eval_prc, is_imptd, car_info, description, ts, ds, lbl_nam, colors
+  </sql>
+  <select id="selectModelInfoByPos" resultType="java.lang.Integer" >
+    select
+    SUBSTRING(car_info, (#{pos,jdbcType=INTEGER} - 1) * 6 + 1, 6) + 0
+    from car_model
+    WHERE id = #{id,jdbcType=CHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from car_model
+  </select>
+  <select id="selectValid" resultMap="BaseResultMap" parameterType="java.lang.Short">
+    select
+    <include refid="Base_Column_List" />
+    from car_model
+    WHERE ds = #{ds,jdbcType=SMALLINT}
+  </select>
+  <select id="selectFuzzyByQt" resultMap="ValuedResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from car_model
+    where ds = 0 and `level` &gt; 1
+    <if test="qt!=null and qt!=''">
+      and lbl_nam LIKE  CONCAT(CONCAT('%',#{qt,jdbcType=VARCHAR},'%'))
+    </if>
+  </select>
+  <select id="selectValuedBySelective" resultMap="ValuedResultMap" parameterType="java.util.HashMap" >
+    select
+    <include refid="Base_Column_List" />
+    from car_model
+    where ds = 0
+    <if test="isImptd!=null">
+      and is_imptd = #{isImptd,jdbcType=BIT}
+    </if>
+    <if test="name!=null and name!=''">
+      where `name` = #{name,jdbcType=CHAR}
+    </if>
+  </select>
+  <select id="selectDetailedBySelective" resultMap="DetailedResultMap" parameterType="java.util.HashMap" >
+    select
+    <include refid="Base_Column_List" />
+    from car_model
+    where ds = 0
+    <if test="isImptd!=null">
+      and is_imptd = #{isImptd,jdbcType=BIT}
+    </if>
+    <if test="name!=null and name!=''">
+      where `name` = #{name,jdbcType=CHAR}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from car_model
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from car_model
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.CarModel" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into car_model (id, `level`, sort, pid, `name`, eval_prc, is_imptd, car_info, description, ts, ds, lbl_nam, colors)
+    values (#{id,jdbcType=CHAR}, #{level,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{pid,jdbcType=CHAR},
+      #{name,jdbcType=VARCHAR}, #{evalPrc,jdbcType=DECIMAL}, #{isImptd,jdbcType=BIT}, 
+      #{carInfo,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{ts,jdbcType=BIGINT}, 
+      #{ds,jdbcType=SMALLINT},
+    SELECT CONCAT(lbl_nam,',',#{name,jdbcType=VARCHAR}) FROM car_model WHERE id = #{pid,jdbcType=CHAR},
+    #{colors,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.CarModel" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into car_model
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="level != null" >
+        `level`,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="name != null and pid!=null">
+        lbl_nam,
+      </if>
+      <if test="evalPrc != null" >
+        eval_prc,
+      </if>
+      <if test="isImptd != null" >
+        is_imptd,
+      </if>
+      <if test="carInfo != null" >
+        car_info,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="colors != null" >
+        colors,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=CHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and pid!=null">
+        SELECT CONCAT(lbl_nam,',',#{name,jdbcType=VARCHAR}) FROM car_model WHERE id = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="evalPrc != null" >
+        #{evalPrc,jdbcType=DECIMAL},
+      </if>
+      <if test="isImptd != null" >
+        #{isImptd,jdbcType=BIT},
+      </if>
+      <if test="carInfo != null" >
+        #{carInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="colors != null" >
+        #{colors,jdbcType=VARCHAR},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.CarModel" >
+    update car_model
+    <set >
+      <if test="level != null" >
+        `level` = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and pid != null">
+        lbl_nam = SELECT CONCAT(lbl_nam,',',#{name,jdbcType=VARCHAR}) FROM car_model WHERE id = #{pid,jdbcType=CHAR},
+      </if>
+      <if test="evalPrc != null" >
+        eval_prc = #{evalPrc,jdbcType=DECIMAL},
+      </if>
+      <if test="isImptd != null" >
+        is_imptd = #{isImptd,jdbcType=BIT},
+      </if>
+      <if test="carInfo != null" >
+        car_info = #{carInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="colors != null" >
+        colors = #{colors,jdbcType=VARCHAR},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.CarModel" >
+    update car_model
+    set `level` = #{level,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      pid = #{pid,jdbcType=CHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      eval_prc = #{evalPrc,jdbcType=DECIMAL},
+      is_imptd = #{isImptd,jdbcType=BIT},
+      car_info = #{carInfo,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      lbl_nam = SELECT CONCAT(lbl_nam,',',#{name,jdbcType=VARCHAR}) FROM car_model WHERE id = #{pid,jdbcType=CHAR},
+      colors = #{colors,jdbcType=VARCHAR},
+      ts = #{ts,jdbcType=BIGINT},
+      ds = #{ds,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

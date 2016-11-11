@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.aisc.business.mapper.sys.WmiCvtMapper" >
+  <resultMap id="BaseResultMap" type="cc.aisc.business.model.sys.WmiCvt" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR" />
+    <result column="wmi" property="wmi" jdbcType="CHAR" />
+    <result column="veh_brand" property="vehBrand" jdbcType="VARCHAR" />
+    <result column="com_addr" property="comAddr" jdbcType="VARCHAR" />
+    <result column="veh_type" property="vehType" jdbcType="VARCHAR" />
+    <result column="ds" property="ds" jdbcType="SMALLINT" />
+    <result column="ts" property="ts" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, com_name, wmi, veh_brand, com_addr, veh_type, ds, ts
+  </sql>
+  <select id="selectValuedBySelective" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+  SELECT
+  <include refid="Base_Column_List" />
+  FROM wmi_cvt
+  WHERE ds = 0
+  <if test="vehType!=null">
+    AND veh_type LIKE CONCAT(CONCAT('%',#{vehType,jdbcType=VARCHAR},'%'))
+  </if>
+  <if test="wmi != null" >
+    AND wmi = #{wmi,jdbcType=CHAR}
+  </if>
+</select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from wmi_cvt
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from wmi_cvt
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="cc.aisc.business.model.sys.WmiCvt" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into wmi_cvt (id, com_name, wmi, veh_brand, com_addr, veh_type, ds, ts)
+    values (#{id,jdbcType=CHAR}, #{comName,jdbcType=VARCHAR}, #{wmi,jdbcType=CHAR}, #{vehBrand,jdbcType=VARCHAR},
+      #{comAddr,jdbcType=VARCHAR}, #{vehType,jdbcType=VARCHAR}, #{ds,jdbcType=SMALLINT}, #{ts,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="cc.aisc.business.model.sys.WmiCvt" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT replace(uuid(),'-','') from dual
+    </selectKey>
+    insert into wmi_cvt
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="comName != null" >
+        com_name,
+      </if>
+      <if test="wmi != null" >
+        wmi,
+      </if>
+      <if test="vehBrand != null" >
+        veh_brand,
+      </if>
+      <if test="comAddr != null" >
+        com_addr,
+      </if>
+      <if test="vehType != null" >
+        veh_type,
+      </if>
+      <if test="ds != null" >
+        ds,
+      </if>
+      <if test="ts != null" >
+        ts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=CHAR}
+      <if test="comName != null" >
+        #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="wmi != null" >
+        #{wmi,jdbcType=CHAR},
+      </if>
+      <if test="vehBrand != null" >
+        #{vehBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="comAddr != null" >
+        #{comAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="vehType != null" >
+        #{vehType,jdbcType=VARCHAR},
+      </if>
+      <if test="ds != null" >
+        #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        #{ts,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.aisc.business.model.sys.WmiCvt" >
+    update wmi_cvt
+    <set >
+      <if test="comName != null" >
+        com_name = #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="wmi != null" >
+        wmi = #{wmi,jdbcType=CHAR},
+      </if>
+      <if test="vehBrand != null" >
+        veh_brand = #{vehBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="comAddr != null" >
+        com_addr = #{comAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="vehType != null" >
+        veh_type = #{vehType,jdbcType=VARCHAR},
+      </if>
+      <if test="ds != null" >
+        ds = #{ds,jdbcType=SMALLINT},
+      </if>
+      <if test="ts != null" >
+        ts = #{ts,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.aisc.business.model.sys.WmiCvt" >
+    update wmi_cvt
+    set com_name = #{comName,jdbcType=VARCHAR},
+      wmi = #{wmi,jdbcType=CHAR},
+      veh_brand = #{vehBrand,jdbcType=VARCHAR},
+      com_addr = #{comAddr,jdbcType=VARCHAR},
+      veh_type = #{vehType,jdbcType=VARCHAR},
+      ds = #{ds,jdbcType=SMALLINT},
+      ts = #{ts,jdbcType=BIGINT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>
